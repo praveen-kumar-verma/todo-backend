@@ -4,7 +4,9 @@ const jwt = require("jsonwebtoken");
 
 function userAuthMiddleware(req, res, next) {
     if (!req.header('Authorization')) {
-        return res.status(401).send('Access denied. No token provided.');
+        return res.status(401).json({
+            error: 'Access denied. No token provided.'
+        });
     }
     const token = req.header('Authorization').replace('Bearer ', '');
 
@@ -13,7 +15,9 @@ function userAuthMiddleware(req, res, next) {
         req.user = decoded.userId;
         next();
     } catch (error) {
-        res.status(400).send('Invalid token.');
+        res.status(400).json({
+            error:'Invalid token'
+        });
     }
 
 }

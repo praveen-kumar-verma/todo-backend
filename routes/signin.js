@@ -17,15 +17,22 @@ router.post("/",async(req,res)=>{
 
         const user = await User.findOne({ email });
         if (!user) {
-            return res.status(400).send('User not found');
+            return res.status(400).json({
+                error:'User not found'
+            }
+            );
         }
 
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-            return res.status(400).send('Invalid credentials');
+            return res.status(400).json({
+                error: 'Invalid credentials'
+            })
         }
 
         const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        // const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '5m' });
+
         res.json({ token });
 
 
@@ -35,7 +42,9 @@ router.post("/",async(req,res)=>{
         if (error instanceof zod.ZodError) {
             res.status(400).json({ errors: error.errors });
           } else {
-            res.status(400).send('Error registering user');
+            res.status(400).json({
+                error:'Error registering user'
+            })
           }
         
     }
